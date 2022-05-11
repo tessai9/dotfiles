@@ -39,6 +39,7 @@
   (global-company-mode))
 (use-package company-go)
 (use-package company-php)
+(use-package company-web)
 
 ;; docker
 (use-package dockerfile-mode)
@@ -51,8 +52,11 @@
 (use-package ruby-end)
 (use-package flymake-ruby)
 
-;; package for JavaScript
+;; package for JavaScript/TypeScript
 (use-package typescript-mode)
+
+;; package for frontend
+(use-package scss-mode)
 
 ;; developer support
 (use-package magit)
@@ -61,13 +65,12 @@
   (editorconfig-mode 1))
 (use-package rainbow-delimiters)
 (use-package dumb-jump)
+(use-package yaml-mode)
 (use-package neotree
-  :init
-  (setq neo-smart-open t)
   :config
+  (setq neo-smart-open t)
   (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
   (setq-default neo-show-hidden-files t))
-(use-package yaml-mode)
 
 (add-hook 'go-mode-hook
           (lambda ()
@@ -84,6 +87,9 @@
 (global-set-key (kbd "<ESC> <down>")  'windmove-down)
 (global-set-key (kbd "<ESC> <right>") 'windmove-right)
 (global-set-key (kbd "<ESC> <up>")    'windmove-up)
+
+;; open neotree on start up
+(neotree-show)
 
 ;; customize faces
 (set-face-foreground 'font-lock-string-face "color-202")

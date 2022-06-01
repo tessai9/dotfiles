@@ -33,6 +33,15 @@
 (use-package dotenv-mode)
 (use-package rspec-mode)
 
+;; lsp
+(use-package eglot
+  :config
+  (define-key eglot-mode-map (kbd "M-[") 'xref-find-definitions)
+  (define-key eglot-mode-map (kbd "M-]") 'pop-tag-mark)
+  (add-to-list 'eglot-server-programs
+               '(ruby-mode . ("localhost:7658"))))
+  ;; (add-hook 'ruby-mode-hook #'eglot-ensure))
+
 ;; company
 (use-package company
   :init

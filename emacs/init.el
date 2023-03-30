@@ -62,7 +62,7 @@
 (use-package flymake-ruby)
 
 ;; package for JavaScript/TypeScript
-(use-package typescript-mode)
+(use-package tide)
 
 ;; package for frontend
 (use-package scss-mode)
@@ -87,6 +87,7 @@
 
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 
 (setq ruby-insert-encoding-magic-comment nil)
 

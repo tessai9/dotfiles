@@ -80,6 +80,7 @@ export LDFLAGS="-L/usr/local/opt/llvm/lib"
 export CPPFLAGS="-I/usr/local/opt/llvm/include"
 export PATH=~/.rbenv/bin:$PATH
 eval "$(rbenv init -)"
+eval "$(nodenv init -)"
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -102,8 +103,16 @@ eval "$(rbenv init -)"
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-eval "$(nodenv init -)"
+alias emc="emacsclient -t -a ''"
+alias runemd="emacs --daemon"
+alias killemd='emacsclient -e "(kill-emacs)"'
+alias dc='docker compose'
 
 # bat theme
 export BAT_THEME=Coldark-Dark
 export PATH="/usr/local/sbin:$PATH"
+
+# Start tmux at initialization
+# if [ $SHLVL = 1 ]; then
+#   tmux
+# fi

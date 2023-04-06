@@ -62,6 +62,9 @@
   :config
   (setq web-mode-markup-indent-offset 2))
 
+;; package for JavaScript/TypeScript
+(use-package tide)
+
 ;; package for frontend
 (use-package scss-mode)
 
@@ -87,6 +90,8 @@
 
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.slim\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 
 (setq ruby-insert-encoding-magic-comment nil)
 

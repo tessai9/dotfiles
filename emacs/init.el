@@ -23,16 +23,6 @@
 (setq use-package-always-ensure t)
 (require 'use-package)
 
-;; language modes
-(use-package go-mode)
-(use-package rust-mode)
-(use-package web-mode
-  :config
-  (setq web-mode-markup-indent-offset 2))
-(use-package markdown-mode)
-(use-package dotenv-mode)
-(use-package rspec-mode)
-
 ;; lsp
 (use-package eglot
   :config
@@ -54,15 +44,23 @@
 (use-package dockerfile-mode)
 (use-package docker-compose-mode)
 
+;; package for Go
+(use-package go-mode)
+
 ;; package for Rust
+(use-package rust-mode)
 (use-package cargo)
 
 ;; package for Ruby
 (use-package ruby-end)
-(use-package flymake-ruby)
+(use-package rubocop)
+(use-package rubocopfmt)
+(use-package rspec-mode)
 
-;; package for JavaScript/TypeScript
-(use-package typescript-mode)
+;; package for HTML
+(use-package web-mode
+  :config
+  (setq web-mode-markup-indent-offset 2))
 
 ;; package for frontend
 (use-package scss-mode)
@@ -74,11 +72,13 @@
   (editorconfig-mode 1))
 (use-package rainbow-delimiters)
 (use-package dumb-jump)
+(use-package markdown-mode)
+(use-package dotenv-mode)
 (use-package yaml-mode)
 (use-package neotree
   :config
   (setq neo-smart-open t)
-  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+  ;; (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
   (setq-default neo-show-hidden-files t))
 
 (add-hook 'go-mode-hook
@@ -86,7 +86,7 @@
             (setq indent-tabs-mode nil)))
 
 (require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.slim\\'" . web-mode))
 
 (setq ruby-insert-encoding-magic-comment nil)
 
@@ -98,7 +98,8 @@
 (global-set-key (kbd "<ESC> <up>")    'windmove-up)
 
 ;; open neotree on start up
-(neotree-show)
+;; disable if you run emacs as emacs client
+;; (neotree-show)
 
 ;; customize faces
 (set-face-foreground 'font-lock-string-face "color-202")

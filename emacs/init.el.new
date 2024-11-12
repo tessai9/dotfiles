@@ -1,0 +1,122 @@
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; set variables
+(setq package-enable-at-startup nil)
+(setq make-backup-files nil)
+(setq auto-save-default nil)
+(setq truncate-lines t)
+(setq truncate-partial-width-windows t)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq scroll-conservatively 1)
+(setq scroll-margin 10)
+(setq next-screen-context-lines 5)
+(setq scroll-preserve-screen-position t)
+(setq windmove-wrap-around t)
+(setq ruby-insert-encoding-magic-comment nil)
+(setq custom-file "~/.emacs.d/custom.el")
+(condition-case nil
+    (load custom-file)
+  (error nil))
+
+(straight-use-package 'use-package)
+
+;; language packages
+(use-package markdown-mode
+  :straight t)
+(use-package dotenv-mode
+  :straight t)
+
+;; company
+(use-package company
+  :init
+  (global-company-mode)
+  :straight t)
+(use-package company-web
+  :straight t)
+
+;; docker
+(use-package dockerfile-mode
+  :straight t)
+(use-package docker-compose-mode
+  :straight t)
+
+;; package for Ruby
+(use-package ruby-end
+  :straight t)
+
+;; package for Rails
+(use-package slim-mode
+  :straight t)
+(use-package rubocop
+  :straight t)
+(use-package rubocopfmt
+  :straight t)
+
+;; package for Go
+(use-package go-mode
+  :straight t)
+(use-package company-go
+  :straight t)
+
+;; package for frontend
+(use-package scss-mode
+  :straight t)
+
+;; developer support
+(use-package magit
+  :straight t)
+(use-package editorconfig
+  :init
+  (editorconfig-mode 1)
+  :straight t)
+(use-package rainbow-delimiters
+  :straight t)
+(use-package dumb-jump
+  :straight t)
+(use-package web-mode
+  :straight t)
+(use-package neotree
+  :config
+  (setq neo-smart-open t)
+  (setq-default neo-show-hidden-files t)
+  :straight t)
+(use-package copilot
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+  :ensure t)
+
+;; window moving
+(windmove-default-keybindings)
+(global-set-key (kbd "<ESC> <left>")  'windmove-left)
+(global-set-key (kbd "S-<left>") 'windmove-left)
+(global-set-key (kbd "<ESC> <down>")  'windmove-down)
+(global-set-key (kbd "S-<down>") 'windmove-down)
+(global-set-key (kbd "<ESC> <right>") 'windmove-right)
+(global-set-key (kbd "S-<right>") 'windmove-right)
+(global-set-key (kbd "<ESC> <up>")    'windmove-up)
+(global-set-key (kbd "S-<up>") 'windmove-up)
+
+;; customize faces
+(set-face-foreground 'font-lock-string-face "color-202")
+(set-face-foreground 'minibuffer-prompt "brightyellow")
+(set-face-foreground 'neo-dir-link-face "color-39")
+(set-face-foreground 'neo-file-link-face "cyan")
+(set-face-foreground 'neo-header-face "color-196")
+(set-face-foreground 'neo-root-dir-face "color-190")
+(set-face-foreground 'font-lock-builtin-face "color-39")
+(set-face-foreground 'font-lock-function-name-face "color-39")
+(set-face-foreground 'web-mode-html-tag-bracket-face "white")

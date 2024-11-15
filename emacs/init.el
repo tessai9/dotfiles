@@ -1,10 +1,21 @@
-(require 'package)
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
-(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
-(package-initialize)
-(package-refresh-contents)
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
+;; set variables
+(setq package-enable-at-startup nil)
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (setq truncate-lines t)
@@ -16,95 +27,111 @@
 (setq next-screen-context-lines 5)
 (setq scroll-preserve-screen-position t)
 (setq windmove-wrap-around t)
+(setq ruby-insert-encoding-magic-comment nil)
+(setq custom-file "~/.emacs.d/custom.el")
+(condition-case nil
+    (load custom-file)
+  (error nil))
 
-;; install use-package if it does not exist
-(when (not (package-installed-p 'use-package))
-  (package-install 'use-package))
-(setq use-package-always-ensure t)
-(require 'use-package)
+(straight-use-package 'use-package)
 
 ;; lsp
-(use-package eglot
-  :config
-  (define-key eglot-mode-map (kbd "M-[") 'xref-find-definitions)
-  (define-key eglot-mode-map (kbd "M-]") 'pop-tag-mark)
-  (add-to-list 'eglot-server-programs
-               '(ruby-mode . ("localhost:7658"))))
-  ;; (add-hook 'ruby-mode-hook #'eglot-ensure))
+;; (use-package eglot
+;;   :config
+;;   (define-key eglot-mode-map (kbd "M-[") 'xref-find-definitions)
+;;   (define-key eglot-mode-map (kbd "M-]") 'pop-tag-mark)
+;;   (add-to-list 'eglot-server-programs
+;;                '(ruby-mode . ("localhost:7658"))))
+;;   (add-hook 'ruby-mode-hook #'eglot-ensure))
+
+;; language packages
+(use-package markdown-mode
+  :straight t)
+(use-package dotenv-mode
+  :straight t)
 
 ;; company
 (use-package company
   :init
-  (global-company-mode))
-(use-package company-go)
-(use-package company-php)
-(use-package company-web)
+  (global-company-mode)
+  :straight t)
+(use-package company-web
+  :straight t)
 
 ;; docker
-(use-package dockerfile-mode)
-(use-package docker-compose-mode)
-
-;; package for Go
-(use-package go-mode)
-
-;; package for Rust
-(use-package rust-mode)
-(use-package cargo)
+(use-package dockerfile-mode
+  :straight t)
+(use-package docker-compose-mode
+  :straight t)
 
 ;; package for Ruby
-(use-package ruby-end)
-(use-package rubocop)
-(use-package rubocopfmt)
-(use-package rspec-mode)
+(use-package ruby-end
+  :straight t)
 
-;; package for HTML
-(use-package web-mode
-  :config
-  (setq web-mode-markup-indent-offset 2))
+;; package for Rails
+(use-package slim-mode
+  :straight t)
+(use-package rubocop
+  :straight t)
+(use-package rubocopfmt
+  :straight t)
 
-;; package for JavaScript/TypeScript
-(use-package tide)
+;; package for Go
+(use-package go-mode
+  :hook ((go-mode . (lambda ()
+                      (setq indent-tabs-mode nil))))
+  :straight t)
+(use-package company-go
+  :straight t)
+
+;; package for Rust
+(use-package rust-mode
+  :straight t)
+(use-package cargo
+  :straight t)
 
 ;; package for frontend
-(use-package scss-mode)
+(use-package web-mode
+  :config
+  (setq web-mode-markup-indent-offset 2)
+  :init
+  (add-to-list 'auto-mode-alist '("\\.slim$'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb$'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx$'" . web-mode))
+  :straight t)
+(use-package scss-mode
+  :straight t)
 
 ;; developer support
-(use-package magit)
+(use-package magit
+  :straight t)
 (use-package editorconfig
   :init
-  (editorconfig-mode 1))
-(use-package rainbow-delimiters)
-(use-package dumb-jump)
-(use-package markdown-mode)
-(use-package dotenv-mode)
-(use-package yaml-mode)
+  (editorconfig-mode 1)
+  :straight t)
+(use-package rainbow-delimiters
+  :straight t)
+(use-package dumb-jump
+  :straight t)
 (use-package neotree
   :config
   (setq neo-smart-open t)
-  ;; (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-  (setq-default neo-show-hidden-files t))
-
-(add-hook 'go-mode-hook
-          (lambda ()
-            (setq indent-tabs-mode nil)))
-
-(require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.slim\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-
-(setq ruby-insert-encoding-magic-comment nil)
+  (setq-default neo-show-hidden-files t)
+  :straight t)
+(use-package copilot
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+  :ensure t)
 
 ;; window moving
 (windmove-default-keybindings)
 (global-set-key (kbd "<ESC> <left>")  'windmove-left)
+(global-set-key (kbd "S-<left>") 'windmove-left)
 (global-set-key (kbd "<ESC> <down>")  'windmove-down)
+(global-set-key (kbd "S-<down>") 'windmove-down)
 (global-set-key (kbd "<ESC> <right>") 'windmove-right)
+(global-set-key (kbd "S-<right>") 'windmove-right)
 (global-set-key (kbd "<ESC> <up>")    'windmove-up)
-
-;; open neotree on start up
-;; disable if you run emacs as emacs client
-;; (neotree-show)
+(global-set-key (kbd "S-<up>") 'windmove-up)
 
 ;; customize faces
 (set-face-foreground 'font-lock-string-face "color-202")

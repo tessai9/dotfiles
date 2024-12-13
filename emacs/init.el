@@ -44,12 +44,6 @@
 ;;                '(ruby-mode . ("localhost:7658"))))
 ;;   (add-hook 'ruby-mode-hook #'eglot-ensure))
 
-;; language packages
-(use-package markdown-mode
-  :straight t)
-(use-package dotenv-mode
-  :straight t)
-
 ;; company
 (use-package company
   :init
@@ -90,6 +84,18 @@
 (use-package cargo
   :straight t)
 
+;; package for TypeScript
+(use-package typescript-ts-mode
+  :mode (("\\\\.tsx\\\\" . tsx-ts-mode)
+         ("\\\\.ts\\\\" . tsx-ts-mode))
+  :config
+  (setq typescript-ts-mode-indent-offset 2)
+  :straight t)
+
+;; package for scss
+(use-package scss-mode
+  :straight t)
+
 ;; package for frontend
 (use-package web-mode
   :config
@@ -99,10 +105,36 @@
   (add-to-list 'auto-mode-alist '("\\.erb$'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.tsx$'" . web-mode))
   :straight t)
-(use-package scss-mode
+
+;; tree-sitter configuration
+(use-package treesit
+  :config
+  (setq treesit-font-lock-level 4))
+(use-package treesit-auto
+  :init
+  (require 'treesit-auto)
+  (global-treesit-auto-mode)
+  :config
+  (setq treesit-auto-install t)
+  :straight t)
+(use-package tree-sitter
+  :hook ((typescript-ts-mode . tree-sitter-hl-mode)
+         (tsx-ts-mode . tree-sitter-hl-mode))
+  :config
+  (global-tree-sitter-mode)
+  :straight t)
+(use-package tree-sitter-langs
+  :after tree-sitter
+  :config
+  (tree-sitter-require 'tsx)
+  (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-ts-mode . tsx))
   :straight t)
 
 ;; developer support
+(use-package markdown-mode
+  :straight t)
+(use-package dotenv-mode
+  :straight t)
 (use-package magit
   :straight t)
 (use-package editorconfig

@@ -1,3 +1,10 @@
+;; =============================================================================
+;; init.el
+;; =============================================================================
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; straight.el bootstrap
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name
@@ -14,7 +21,9 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-;; set variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Basic settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq package-enable-at-startup nil)
 (setq make-backup-files nil)
 (setq auto-save-default nil)
@@ -35,156 +44,145 @@
 
 (straight-use-package 'use-package)
 
-;; lsp
-;; (use-package eglot
-;;   :config
-;;   (define-key eglot-mode-map (kbd "M-[") 'xref-find-definitions)
-;;   (define-key eglot-mode-map (kbd "M-]") 'pop-tag-mark)
-;;   (add-to-list 'eglot-server-programs
-;;                '(ruby-mode . ("localhost:7658"))))
-;;   (add-hook 'ruby-mode-hook #'eglot-ensure))
-
-;; company
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Completion
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package company
-  :init
-  (global-company-mode)
-  :straight t)
+  :straight t
+  :init (global-company-mode)
+  :config
+  (setq company-idle-delay 0.2
+        company-minimum-prefix-length 1
+        company-show-numbers t))
+
 (use-package company-web
   :straight t)
+(use-package company-go
+  :straight t)
 
-;; docker
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Docker
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package dockerfile-mode
   :straight t)
 (use-package docker-compose-mode
   :straight t)
 
-;; package for Ruby
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ruby
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package ruby-end
   :straight t)
 
-;; package for Rails
-(use-package slim-mode
-  :straight t)
-(use-package rubocop
-  :straight t)
-(use-package rubocopfmt
-  :straight t)
-
-;; package for Go
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Go
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package go-mode
-  :hook ((go-mode . (lambda ()
-                      (setq indent-tabs-mode nil))))
-  :straight t)
-(use-package company-go
-  :straight t)
+  :straight t
+  :hook (go-mode . (lambda ()
+                     (setq tab-width 4)
+                     (setq indent-tabs-mode t))))
 
-;; package for Rust
-(use-package rust-mode
-  :straight t)
-(use-package cargo
-  :straight t)
-
-;; package for TypeScript
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TypeScript / TSX
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package typescript-ts-mode
-  :mode (("\\\\.tsx\\\\" . tsx-ts-mode)
-         ("\\\\.ts\\\\" . tsx-ts-mode))
+  :straight t
+  :mode (("\\.ts\\'" . tsx-ts-mode)
+         ("\\.tsx\\'" . tsx-ts-mode))
   :config
-  (setq typescript-ts-mode-indent-offset 2)
-  :straight t)
+  (setq typescript-ts-mode-indent-offset 2))
 
-;; package for scss
-(use-package scss-mode
-  :straight t)
-
-;; package for frontend
-(use-package web-mode
-  :config
-  (setq web-mode-markup-indent-offset 2)
-  :init
-  (add-to-list 'auto-mode-alist '("\\.slim$'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.erb$'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.tsx$'" . web-mode))
-  :straight t)
-
-;; tree-sitter configuration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tree-sitter
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package treesit
   :config
   (setq treesit-font-lock-level 4))
+
 (use-package treesit-auto
+  :straight t
   :init
   (require 'treesit-auto)
   (global-treesit-auto-mode)
   :config
-  (setq treesit-auto-install t)
-  :straight t)
+  (setq treesit-auto-install t))
+
 (use-package tree-sitter
+  :straight t
   :hook ((typescript-ts-mode . tree-sitter-hl-mode)
-         (tsx-ts-mode . tree-sitter-hl-mode))
+         (tsx-ts-mode        . tree-sitter-hl-mode))
   :config
-  (global-tree-sitter-mode)
-  :straight t)
+  (global-tree-sitter-mode))
+
 (use-package tree-sitter-langs
+  :straight t
   :after tree-sitter
   :config
   (tree-sitter-require 'tsx)
-  (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-ts-mode . tsx))
-  :straight t)
+  (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-ts-mode . tsx)))
 
-;; developer support
-(use-package markdown-mode
-  :straight t)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Developer support
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package dotenv-mode
   :straight t)
+
+(use-package web-mode
+  :straight t)
+
 (use-package magit
-  :straight t)
+  :straight t
+  :bind ("C-x g" . magit-status))
+
 (use-package editorconfig
-  :init
-  (editorconfig-mode 1)
-  :straight t)
+  :straight t
+  :init (editorconfig-mode 1))
+
 (use-package rainbow-delimiters
-  :straight t)
+  :straight t
+  :hook (prog-mode . rainbow-delimiters-mode))
+
 (use-package dumb-jump
-  :straight t)
+  :straight t
+  :init (dumb-jump-mode))
+
 (use-package neotree
+  :straight t
   :config
   (setq neo-smart-open t)
-  (setq-default neo-show-hidden-files t)
-  :straight t)
-(use-package copilot
-  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
-  :ensure t)
+  (setq-default neo-show-hidden-files t))
 
-;; window moving
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window movement
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (windmove-default-keybindings)
 (global-set-key (kbd "<ESC> <left>")  'windmove-left)
-(global-set-key (kbd "S-<left>") 'windmove-left)
+(global-set-key (kbd "S-<left>")      'windmove-left)
 (global-set-key (kbd "<ESC> <down>")  'windmove-down)
-(global-set-key (kbd "S-<down>") 'windmove-down)
+(global-set-key (kbd "S-<down>")      'windmove-down)
 (global-set-key (kbd "<ESC> <right>") 'windmove-right)
-(global-set-key (kbd "S-<right>") 'windmove-right)
+(global-set-key (kbd "S-<right>")     'windmove-right)
 (global-set-key (kbd "<ESC> <up>")    'windmove-up)
-(global-set-key (kbd "S-<up>") 'windmove-up)
+(global-set-key (kbd "S-<up>")        'windmove-up)
 
-;; customize faces
-(set-face-foreground 'font-lock-string-face "color-202")
-(set-face-foreground 'minibuffer-prompt "brightyellow")
-(set-face-foreground 'neo-dir-link-face "color-39")
-(set-face-foreground 'neo-file-link-face "cyan")
-(set-face-foreground 'neo-header-face "color-196")
-(set-face-foreground 'neo-root-dir-face "color-190")
-(set-face-foreground 'font-lock-builtin-face "brightyellow")
-(set-face-foreground 'font-lock-comment-face "color-123")
-(set-face-foreground 'font-lock-function-name-face "brightcyan")
-(set-face-foreground 'font-lock-string-face "brightred")
-(set-face-foreground 'font-lock-type-face "brightgreen")
-(set-face-foreground 'font-lock-variable-name-face "color-142")
-(set-face-foreground 'minibuffer-prompt "brightcyan")
-(set-face-background 'highlight "brightblack")
-(set-face-foreground 'link "color-51")
-(set-face-underline 'link t)
-(set-face-foreground 'magit-branch-local "color-250")
-(set-face-foreground 'magit-refname "color-250")
-(set-face-foreground 'shadow "color-255")
-(set-face-foreground 'web-mode-html-tag-bracket-face "brightwhite")
-(set-face-foreground 'web-mode-html-tag-face "brightcyan")
-(set-face-foreground 'web-mode-inlay-face "color-27")
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; org-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Faces (ターミナル 256色)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-face-foreground 'font-lock-string-face          "color-202")
+(set-face-foreground 'minibuffer-prompt               "brightyellow")
+(set-face-foreground 'neo-dir-link-face              "color-39")
+(set-face-foreground 'neo-file-link-face             "cyan")
+(set-face-foreground 'neo-header-face                "color-196")
+(set-face-foreground 'neo-root-dir-face              "color-190")
+(set-face-foreground 'font-lock-builtin-face         "color-39")
+(set-face-foreground 'font-lock-function-name-face   "color-39")
+(set-face-foreground 'web-mode-html-tag-bracket-face "white")

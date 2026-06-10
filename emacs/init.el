@@ -79,9 +79,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package go-mode
   :straight t
-  :hook (go-mode . (lambda ()
+  :hook ((go-mode . eglot-ensure)
+         (go-ts-mode . eglot-ensure)
+         (go-mode . (lambda ()
                      (setq tab-width 4)
-                     (setq indent-tabs-mode t))))
+                     (setq indent-tabs-mode t)))
+         (go-ts-mode  . (lambda ()
+                     (setq tab-width 4)
+                     (setq indent-tabs-mode t)))
+         (before-save . my/go-before-save))
+  :config
+  (defun my/go-before-save ()
+    (when (or (eq major-mode 'go-mode)
+              (eq major-mode 'go-ts-mode))
+      (eglot-format-buffer)
+      (call-interactively 'eglot-code-action-organize-imports))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TypeScript / TSX
@@ -152,6 +164,19 @@
   :config
   (setq neo-smart-open t)
   (setq-default neo-show-hidden-files t))
+
+(use-package markdown-mode
+  :straight t
+  :mode ("\\.md\\'" . markdown-mode)
+  :init
+  (setq markdown-command "pandoc")
+  :config
+  (defun my/markdown-hot-reload ()
+    "保存時にブラウザをリフレッシュ"
+    (when (eq major-mode 'markdown-mode)
+      (markdown-preview)))
+  :hook
+  (after-save-hook . my/markdown-preview-browser))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window movement
